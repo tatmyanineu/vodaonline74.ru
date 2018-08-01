@@ -1,0 +1,1 @@
+C:\"Program Files (x86)"\PHP\v7.2\php-cgi.exe -f C:\inetpub\wwwroot\vodaonline74.ru\scripts\objects.josn.php

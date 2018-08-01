@@ -1,12 +1,43 @@
 <?php
 session_start();
-include 'include/db_config.php';
+include '../include/db_config.php';
 
 if (isset($_POST['submit'])) {
     if (isset($_POST['login']) and isset($_POST['passwd'])) {
-        $_SESSION['login'] = $_POST['login'];
 
-        header("Location: objects.stats.php");
+        $sql = pg_query('SELECT *
+                FROM
+                  "Tepl"."User_cnt"
+                WHERE
+                  "Tepl"."User_cnt"."Login" = \'' . $_POST['login'] . '\' AND 
+                  "Tepl"."User_cnt"."Password" = \'' . $_POST['passwd'] . '\'');
+
+        if (pg_num_rows($sql) > 0) {
+            while ($row = pg_fetch_row($sql)) {
+                $role = $row[7];
+                $_SESSION['auth'] = array(
+                    'id' => $row[0],
+                    'login' => $row[1],
+                    'role' => $row[7]
+                );
+            }
+            switch ($role) {
+                case 0:
+                    include '../scripts/objects.json.php';
+                    header("Location: objects.view.php");
+                    break;
+                case 14:
+                    include '../scripts/objects.json.php';
+                    header("Location: objects.view.php");
+                    break;
+                case 21:
+                    header("Location: objects.stats.php");
+                    break;
+                case 31:
+                    header("Location: objects.stats.php");
+                    break;
+            }
+        }
     }
 }
 ?>
@@ -44,7 +75,7 @@ if (isset($_POST['submit'])) {
                         <div class="form-group">
                             <div class="form-check">
                                 <label class="form-check-label">
-                                    <input class="form-check-input" id="lite" type="checkbox" checked="true"> lite-версия (Обновление от )</label>
+                                    <input class="form-check-input" id="lite" name="lite" type="checkbox" checked="true"> lite-версия (Обновление от )</label>
                             </div>
                         </div>
                         <div class="form-group">

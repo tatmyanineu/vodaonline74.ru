@@ -40,9 +40,9 @@ include '../include/db_config.php';
             </nav>
 
 
-            <div class="container-fluid h-100">
-                <div class="row h-100">
-                    <aside class="col-12 col-md-2 p-0 bg-dark">
+         <div class="container-fluid h-100">
+                <div class="row">
+                    <aside class="col-12 col-md-2 col-lg-2 p-0 bg-dark">
                         <nav class="navbar navbar-expand navbar-dark bg-dark flex-md-column flex-row align-items-start py-2">
                             <div class="collapse navbar-collapse">
                                 <ul class="flex-md-column flex-row navbar-nav w-100 justify-content-between">
@@ -138,7 +138,7 @@ include '../include/db_config.php';
 //            refresh_table();
 
             $.ajax({
-                "url": "ajax/users/users_ajax.php",
+                "url": "ajax/users/table_group.php",
                 "dataType": "json",
                 "success": function (json) {
                     console.log(json.columns);
