@@ -62,13 +62,13 @@ $date2 = date($num . '.m.Y');
                     </li>
                     <?php include '../include/menu.php'; ?>
 
-                    <li class="nav-item mt-5" data-toggle="tooltip" data-placement="right" title="" data-original-title="Настройка пользователей">
+                    <li class="nav-item mt-5" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить заявку">
                         <a class="nav-link" href="#">
                             <i class="fas fa-calendar-plus"></i>
                             <span class="nav-link-text">Добавить заявку</span>
                         </a>
                     </li>
-
+                    <?php include '../include/service_menu.php'; ?>
                 </ul>
 
                 <ul class="navbar-nav ml-auto">
@@ -192,10 +192,21 @@ $date2 = date($num . '.m.Y');
             });
             var tables = $(tableName).DataTable({
                 destroy: true,
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'excel', 'pdf'
-                ],
+                dom: 'Brtip',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                            // Loop over the cells in column `C`
+                            $('row c[r^="C"]', sheet).each(function () {
+                                // Get the value
+                                if ($('is t', this).text() == '00:00') {
+                                    $(this).attr('s', '20');
+                                }
+                            });
+                        }
+                    }],
                 "pageLength": 50,
                 "autoWidth": false,
                 oLanguage: {
@@ -251,6 +262,7 @@ $date2 = date($num . '.m.Y');
 
             $('#archive_param').click(function () {
                 $("th").remove();
+                $('#view_table>tfoot>').remove();
                 view_table();
             });
             view_table();

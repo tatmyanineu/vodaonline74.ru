@@ -84,3 +84,58 @@ COMMENT ON COLUMN tickets_work.id IS 'идентификатор';
 COMMENT ON COLUMN tickets_work.name_work IS 'название проводимых работ';
 COMMENT ON COLUMN tickets_work.count_link IS 'нужна ли ссылка на ресурс';
 
+
+
+
+-- Table: prop_connect
+
+-- DROP TABLE prop_connect;
+
+CREATE TABLE prop_connect
+(
+  id serial NOT NULL, -- номер
+  prp_id integer, -- номер подключения в базе
+  id_connect text, -- номер подключения в базе МУП ПОВВ
+  date timestamp without time zone, -- Дата установки счетчика
+  cnt_numb text, -- номер счетчика
+  plc_id integer, -- идентификатор места
+  cdog text, -- идщентификатор УК
+  CONSTRAINT "id_conProp" PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE prop_connect
+  OWNER TO postgres;
+COMMENT ON COLUMN prop_connect.id IS 'номер';
+COMMENT ON COLUMN prop_connect.prp_id IS 'номер подключения в базе';
+COMMENT ON COLUMN prop_connect.id_connect IS 'номер подключения в базе МУП ПОВВ';
+COMMENT ON COLUMN prop_connect.date IS 'Дата установки счетчика';
+COMMENT ON COLUMN prop_connect.cnt_numb IS 'номер счетчика';
+COMMENT ON COLUMN prop_connect.plc_id IS 'идентификатор места';
+COMMENT ON COLUMN prop_connect.cdog IS 'идщентификатор УК
+';
+
+
+
+-- Table: fias_cnt
+
+-- DROP TABLE fias_cnt;
+
+CREATE TABLE fias_cnt
+(
+  id serial NOT NULL,
+  plc_id integer,
+  fias text,
+  id_cn integer, -- идентификатор дома в ЦН
+  CONSTRAINT fias_id PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE fias_cnt
+  OWNER TO postgres;
+COMMENT ON TABLE fias_cnt
+  IS 'СВЯЗКА ФИАС - ЦН  - plc_id';
+COMMENT ON COLUMN fias_cnt.id_cn IS 'идентификатор дома в ЦН';
+

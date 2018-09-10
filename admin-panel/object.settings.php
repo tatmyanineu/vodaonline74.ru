@@ -18,7 +18,7 @@ $date2 = date($num . '.m.Y');
 ?>
 <html>
     <head>
-        <title>Настройки пользователя</title>
+        <title>Настройки обьекта: <?php echo $adr[0]['adr']; ?> </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -31,6 +31,7 @@ $date2 = date($num . '.m.Y');
         <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
         <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 
+        <script src="js/jquery.maskedinput.min.js" type="text/javascript"></script>
 
         <link href="../module/Buttons-1.5.2/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
 
@@ -55,14 +56,14 @@ $date2 = date($num . '.m.Y');
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
                     <li class="nav-item mb-3" data-toggle="tooltip" data-placement="right" title="" data-original-title="Настройка пользователей">
-                        <a class="nav-link" href="objects.view.php">
+                        <a class="nav-link" href="object.view.php?id=<?php echo $_GET['id']; ?>">
                             <i class="fas fa-arrow-left"></i>
                             <span class="nav-link-text">Назад</span>
                         </a>
                     </li>
                     <?php include '../include/menu.php'; ?>
 
-                 </ul>
+                </ul>
 
                 <ul class="navbar-nav ml-auto">
 
@@ -83,47 +84,18 @@ $date2 = date($num . '.m.Y');
 
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="objects.view.php">Объекты</a>
+                        <a href="object.view.php?id=<?php echo $_GET['id']; ?>">Объект</a>
                     </li>
+                    <li class="breadcrumb-item"><a href="manual.fias.php">Справочник: Информация</a></li>
                     <li class="breadcrumb-item active"><?php echo $adr[0]['adr']; ?></li>
                 </ol>
 
                 <hr>
-                <div class="btn-toolbar mx-auto justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
 
+                <div class="mt-5 ml-3">
+                    <div id="fias_data"></div>
 
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Архив <i class="far fa-clock ml-3"></i> </div>
-                        </div>
-                        <select class="form-control type_arch" id="type_archive">
-                            <option value="1">Часовой</option>
-                            <option value="2">Суточный</option>
-                            <option value="3">Месячный</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Нач. дата <i class="fas fa-calendar ml-3"></i> </div>
-                        </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date1" value="<?php echo $date1; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    </div>
-                    <div class="input-group  ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Кон. дата <i class="fas fa-calendar ml-3"></i> </div>
-                        </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date2" value="<?php echo $date2; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    </div>
-                    <div class="input-group  ml-3">
-
-                        <button class=" btn btn-md btn-success" id="archive_param">Сформировать</button>
-                    </div>
-                </div>
-                <div class="mt-5">
-                    <table id="view_table" class="mt-5" style="font-size: 12px; padding-right: 0px;">
-                        <thead><tr></tr></thead>
-                    </table>
+                    <div id="prp_data" ></div>
                 </div>
 
 
@@ -140,24 +112,96 @@ $date2 = date($num . '.m.Y');
             </footer>
         </div>
     </body>
-    <script src="../module/JSZip-2.5.0/jszip.min.js" type="text/javascript"></script>
-    <script src="../module/pdfmake-0.1.36/pdfmake.min.js" type="text/javascript"></script>
-    <script src="../module/pdfmake-0.1.36/vfs_fonts.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/dataTables.buttons.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.bootstrap.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.bootstrap4.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.colVis.min.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.flash.min.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.html5.min.js" type="text/javascript"></script>
-    <script src="../module/Buttons-1.5.2/js/buttons.print.js" type="text/javascript"></script>
+
     <script>
 
+        var fias_data_refresh = function (plc) {
+            $.ajax({
+                type: 'POST',
+                chashe: false,
+                url: 'ajax/property/data_fias.php',
+                data: {plc: plc},
+                success: function (html) {
+                    $('#fias_data').html(html);
+
+                }
+            });
+            return false;
+        }
+
+
+        var prp_data_refresh = function (plc) {
+            $.ajax({
+                type: 'POST',
+                chashe: false,
+                url: 'ajax/property/data_connection.php',
+                data: {plc: plc},
+                success: function (html) {
+                    $('#prp_data').html(html);
+                    $('.date').mask('99.99.9999');
+                }
+            });
+            return false;
+        }
 
         $(document).ready(function () {
+            var plc_id = <?php echo $_GET['id']; ?>;
+            prp_data_refresh(plc_id);
+            fias_data_refresh(plc_id);
 
-          
-        }
-        );
+
+            $(document).on('click', '.btn-save-fias', function () {
+                var fias = $('#fias').val();
+                var cdog = $('#cdog').val();
+                var cn = $('#cnid').val();
+                var func = 'fias_check';
+
+                $.ajax({
+                    type: 'POST',
+                    chashe: false,
+                    url: 'ajax/check.move.php',
+                    data: {fias: fias, plc: plc_id, cn: cn, action: func},
+                    success: function (html) {
+
+                    }
+                });
+                return false;
+            });
+
+
+            $(document).on('click', '.btn-save-prop', function () {
+                var i = 0;
+                var jsonObj = [];
+                var func = "prop.connec.edit";
+                var value = $('h2').each(function () {
+                    var array = new Object();
+                    console.log(this.id);
+                    array.prp = this.id;
+                    array.id_connect = $('#id_connect_' + this.id).val();
+                    array.numb = $('#counter_numb_' + this.id).val();
+                    array.date = $('#date_' + this.id).val();
+                    array.cdog = $('#cdog_' + this.id).val();
+                    array.plc = plc_id;
+                    jsonObj.push(array);
+                    i++;
+                })
+
+                $.ajax({
+                    type: 'POST',
+                    chashe: false,
+                    url: 'ajax/check.move.php',
+                    data: {json:jsonObj, action: func},
+                    success: function (html) {
+
+                    }
+                });
+
+                console.log(jsonObj);
+                return false;
+            });
+
+
+        });
 
     </script>
 

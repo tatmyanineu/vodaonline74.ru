@@ -1,24 +1,18 @@
 <?php
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+//справочник ФИАС кодов  и доступ к редактированию подключений счетчиков
 session_start();
 include '../include/db_config.php';
-
-$sql_name = pg_query('SELECT 
- concat( "Tepl"."Places_cnt"."Name",\', \', "Places_cnt1"."Name") as adr
-FROM
-  "Tepl"."Places_cnt" "Places_cnt1"
-  INNER JOIN "Tepl"."Places_cnt" ON ("Places_cnt1".place_id = "Tepl"."Places_cnt".plc_id)
-WHERE
-  "Places_cnt1".plc_id = ' . $_GET['id'] . '');
-
-$adr = pg_fetch_all($sql_name);
-
-$num = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
-$date1 = date('01.m.Y');
-$date2 = date($num . '.m.Y');
 ?>
+
 <html>
     <head>
-        <title>Настройки пользователя</title>
+        <title>Справочник Подключений </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -55,14 +49,14 @@ $date2 = date($num . '.m.Y');
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
                     <li class="nav-item mb-3" data-toggle="tooltip" data-placement="right" title="" data-original-title="Настройка пользователей">
-                        <a class="nav-link" href="objects.view.php">
+                        <a class="nav-link" href="manual.php">
                             <i class="fas fa-arrow-left"></i>
                             <span class="nav-link-text">Назад</span>
                         </a>
                     </li>
                     <?php include '../include/menu.php'; ?>
 
-                 </ul>
+                </ul>
 
                 <ul class="navbar-nav ml-auto">
 
@@ -83,49 +77,26 @@ $date2 = date($num . '.m.Y');
 
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="objects.view.php">Объекты</a>
+                        <a href="settings.php">Справочники</a>
                     </li>
-                    <li class="breadcrumb-item active"><?php echo $adr[0]['adr']; ?></li>
+                    <li class="breadcrumb-item active">Подключения счетчиков</li>
                 </ol>
-
                 <hr>
-                <div class="btn-toolbar mx-auto justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
-
-
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Архив <i class="far fa-clock ml-3"></i> </div>
-                        </div>
-                        <select class="form-control type_arch" id="type_archive">
-                            <option value="1">Часовой</option>
-                            <option value="2">Суточный</option>
-                            <option value="3">Месячный</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Нач. дата <i class="fas fa-calendar ml-3"></i> </div>
-                        </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date1" value="<?php echo $date1; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    </div>
-                    <div class="input-group  ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Кон. дата <i class="fas fa-calendar ml-3"></i> </div>
-                        </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date2" value="<?php echo $date2; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    </div>
-                    <div class="input-group  ml-3">
-
-                        <button class=" btn btn-md btn-success" id="archive_param">Сформировать</button>
-                    </div>
-                </div>
-                <div class="mt-5">
-                    <table id="view_table" class="mt-5" style="font-size: 12px; padding-right: 0px;">
-                        <thead><tr></tr></thead>
+                <div>
+                    <table id="fias">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>plc_id</th>
+                                <th>Адрес</th>
+                                <th>prp_id</th>
+                                <th>Номер счетчика</th>
+                                <th>Дата установки</th>
+                                <th>Договор УК</th>
+                            </tr>
+                        </thead>
                     </table>
                 </div>
-
 
                 <div style="height: 800px;"></div>
             </div>
@@ -152,12 +123,56 @@ $date2 = date($num . '.m.Y');
     <script src="../module/Buttons-1.5.2/js/buttons.print.js" type="text/javascript"></script>
     <script>
 
+        $('[data-toggle="datepicker"]').datepicker({
+            language: 'ru-RU',
+            format: 'dd.mm.YYYY'
+        });
 
         $(document).ready(function () {
 
-          
-        }
-        );
+            var table = $('#fias').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel'
+                ],
+                paging: false,
+                "oLanguage": {
+                    "sLengthMenu": "Отображено _MENU_ записей на страницу",
+                    "sSearch": "Поиск:",
+                    "sZeroRecords": "Ничего не найдено - извините",
+                    "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                    "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
+                    "sInfoFiltered": "(filtered from _MAX_ total records)",
+                    "oPaginate": {
+                        "sFirst": "Первая",
+                        "sLast": "Посл.",
+                        "sNext": "След.",
+                        "sPrevious": "Пред.",
+                    }
+                },
+                "ajax": {
+                    type: "POST",
+                    url: "ajax/manual/settings.prp.connection.php",
+                },
+                columns: [
+                    {data: "num", searchable: false},
+                    {data: "plc_id", searchable: false},
+                    {data: "adr"},
+                    {data: "prp"},
+                    {data: "number"},
+                    {data: "date"},
+                    {data: "cdog"},
+                ]
+            });
+
+            $(document).on('click', '.fias_id', function () {
+                window.open('object.settings.php?id=' + this.id + '');
+            });
+
+            $('#fias')
+                    .removeClass('display')
+                    .addClass('table table-striped table-bordered');
+        });
 
     </script>
 

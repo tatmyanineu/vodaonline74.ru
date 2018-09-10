@@ -1,24 +1,10 @@
 <?php
 session_start();
 include '../include/db_config.php';
-
-$sql_name = pg_query('SELECT 
- concat( "Tepl"."Places_cnt"."Name",\', \', "Places_cnt1"."Name") as adr
-FROM
-  "Tepl"."Places_cnt" "Places_cnt1"
-  INNER JOIN "Tepl"."Places_cnt" ON ("Places_cnt1".place_id = "Tepl"."Places_cnt".plc_id)
-WHERE
-  "Places_cnt1".plc_id = ' . $_GET['id'] . '');
-
-$adr = pg_fetch_all($sql_name);
-
-$num = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
-$date1 = date('01.m.Y');
-$date2 = date($num . '.m.Y');
 ?>
 <html>
     <head>
-        <title>Настройки пользователя</title>
+        <title>Настройки </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -62,7 +48,7 @@ $date2 = date($num . '.m.Y');
                     </li>
                     <?php include '../include/menu.php'; ?>
 
-                 </ul>
+                </ul>
 
                 <ul class="navbar-nav ml-auto">
 
@@ -83,61 +69,54 @@ $date2 = date($num . '.m.Y');
 
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="objects.view.php">Объекты</a>
+                        <a href="settings.php">Справочники</a>
                     </li>
-                    <li class="breadcrumb-item active"><?php echo $adr[0]['adr']; ?></li>
+                    <li class="breadcrumb-item active">Основные</li>
                 </ol>
 
                 <hr>
-                <div class="btn-toolbar mx-auto justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="my-3 p-3 bg-white rounded shadow-sm">
 
 
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Архив <i class="far fa-clock ml-3"></i> </div>
+
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Справочник ФИАС</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">fias</h6>
+                            <p class="card-text">Связка идентификаторов plc_id с ФИАС кодом, и кодом из ЦН</p>
+                            <a href="manual.fias.php" class="card-link">Перейти</a>
                         </div>
-                        <select class="form-control type_arch" id="type_archive">
-                            <option value="1">Часовой</option>
-                            <option value="2">Суточный</option>
-                            <option value="3">Месячный</option>
-                        </select>
                     </div>
-
-                    <div class="input-group ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Нач. дата <i class="fas fa-calendar ml-3"></i> </div>
+                    
+                     <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Справочник Координат</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">location</h6>
+                            <p class="card-text">Координаты для маркеров на карте. Функция Добавить координаты работает Y.maps автоматом из списка выбранных обьектов </p>
+                            <a href="manual.location.php" class="card-link">Перейти</a>
                         </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date1" value="<?php echo $date1; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
                     </div>
-                    <div class="input-group  ml-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="btnGroupAddon">Кон. дата <i class="fas fa-calendar ml-3"></i> </div>
+                    
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Справочник Подключений счечтиков</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">property connection</h6>
+                            <p class="card-text">Связка параметров ресурсов с данные для МУП ПОВВ </p>
+                            <a href="manual.connect.php" class="card-link">Перейти</a>
                         </div>
-                        <input type="text" class="form-control" data-toggle="datepicker" id="date2" value="<?php echo $date2; ?>" placeholder="" aria-label="Input group example" aria-describedby="btnGroupAddon">
                     </div>
-                    <div class="input-group  ml-3">
-
-                        <button class=" btn btn-md btn-success" id="archive_param">Сформировать</button>
-                    </div>
+                    <div style="height: 800px;"></div>
                 </div>
-                <div class="mt-5">
-                    <table id="view_table" class="mt-5" style="font-size: 12px; padding-right: 0px;">
-                        <thead><tr></tr></thead>
-                    </table>
-                </div>
-
-
-                <div style="height: 800px;"></div>
+                <!-- /.container-fluid-->
+                <!-- /.content-wrapper-->
+                <footer class="sticky-footer">
+                    <div class="container">
+                        <div class="text-center">
+                            <small></small>
+                        </div>
+                    </div>
+                </footer>
             </div>
-            <!-- /.container-fluid-->
-            <!-- /.content-wrapper-->
-            <footer class="sticky-footer">
-                <div class="container">
-                    <div class="text-center">
-                        <small></small>
-                    </div>
-                </div>
-            </footer>
         </div>
     </body>
     <script src="../module/JSZip-2.5.0/jszip.min.js" type="text/javascript"></script>
@@ -152,12 +131,15 @@ $date2 = date($num . '.m.Y');
     <script src="../module/Buttons-1.5.2/js/buttons.print.js" type="text/javascript"></script>
     <script>
 
+        $('[data-toggle="datepicker"]').datepicker({
+            language: 'ru-RU',
+            format: 'dd.mm.YYYY'
+        });
 
         $(document).ready(function () {
 
-          
-        }
-        );
+
+        });
 
     </script>
 

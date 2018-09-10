@@ -47,7 +47,6 @@ FROM
 WHERE
   "Tepl"."Arhiv_cnt".typ_arh = 2 AND 
   "Tepl"."User_cnt"."Login" = \'' . $login . '\'  AND 
-  "Tepl"."ParamResPlc_cnt"."ParamRes_id" <> 386 AND
   "Tepl"."Arhiv_cnt"."DateValue" > \'' . $date . '\'
 ORDER BY
   "Tepl"."ParamResPlc_cnt".plc_id,
@@ -66,15 +65,8 @@ FROM
   INNER JOIN "Tepl"."ParamResGroupRelations" ON ("Tepl"."GroupToUserRelations".grp_id = "Tepl"."ParamResGroupRelations".grp_id)
   INNER JOIN "Tepl"."ParamResPlc_cnt" ON ("Tepl"."ParamResGroupRelations".prp_id = "Tepl"."ParamResPlc_cnt".prp_id)
 WHERE
-  "Tepl"."User_cnt"."Login" = \'' . $login . '\' AND 
-  "Tepl"."ParamResPlc_cnt"."ParamRes_id" <> 386');
+  "Tepl"."User_cnt"."Login" = \'' . $login . '\' ');
 $prp = pg_fetch_all($sql_prp);
-
-
-
-
-
-
 
 
 for ($i = 0; $i < count($archive); $i++) {
@@ -186,12 +178,19 @@ function check_array($array) {
         $error = 1; //нет покзааний за 7 дней
     } else {
         $sl = array_slice($array, 0, 7);
+        $raz = array();
         for ($i = 0; $i < count($sl); $i++) {
+            if ($i + 1 != count($sl)) {
+                $raz[] = $sl[$i]['value'] - $sl[$i + 1]['value'];
+            }
             $summ += $sl[$i]['value'];
         }
         $r = $summ / count($sl);
+
         if ($r == $sl[0]['value']) {
             $error = 2; //нет импульса - отключен за 5 дней
+        } elseif (array_sum($raz) < 1) {
+            $error = 4; //На обьекте возможна неисрпавность импульса
         }
     }
     return $d = array(

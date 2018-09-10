@@ -108,11 +108,11 @@ while ($aData = pg_fetch_row($sql_date)) {
     for ($i = 0; $i < count($res); $i++) {
         $k = array_search($res[$i]['id'], array_column($array_arch, 'param'));
         if ($k !== false) {
-            $val['res_' . $res[$i]['id']] = $array_arch[$k]['value'];
+            $val['res_' . $res[$i]['id']] = sprintf("%.2f", $array_arch[$k]['value']);
             $voda[] = array(
                 'date' => $date,
                 'param' => $array_arch[$k]['param'],
-                'value' => $array_arch[$k]['value']
+                'value' => sprintf("%.2f", $array_arch[$k]['value'])
             );
         } else {
             $val['res_' . $res[$i]['id']] = '';

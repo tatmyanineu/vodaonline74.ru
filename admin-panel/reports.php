@@ -1,12 +1,10 @@
 <?php
 session_start();
 include '../include/db_config.php';
-
-
 ?>
 <html>
     <head>
-        <title>Настройки </title>
+        <title>Отчеты </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -50,13 +48,6 @@ include '../include/db_config.php';
                     </li>
                     <?php include '../include/menu.php'; ?>
 
-                    <li class="nav-item mt-5" data-toggle="tooltip" data-placement="right" title="" data-original-title="Настройка пользователей">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-calendar-plus"></i>
-                            <span class="nav-link-text">Добавить заявку</span>
-                        </a>
-                    </li>
-
                 </ul>
 
                 <ul class="navbar-nav ml-auto">
@@ -78,25 +69,38 @@ include '../include/db_config.php';
 
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="settings.php">Настройки</a>
+                        <a href="settings.php">Отчеты</a>
                     </li>
                     <li class="breadcrumb-item active">Основные</li>
                 </ol>
 
                 <hr>
-              
+                <div class="my-3 p-3 bg-white rounded shadow-sm">
 
-                <div style="height: 800px;"></div>
-            </div>
-            <!-- /.container-fluid-->
-            <!-- /.content-wrapper-->
-            <footer class="sticky-footer">
-                <div class="container">
-                    <div class="text-center">
-                        <small></small>
+
+
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Показания ОПУ за период</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">report values</h6>
+                            <p class="card-text"></p>
+                            <a href="reports.value.php" class="card-link">Перейти</a>
+                        </div>
                     </div>
+                    
+                     
+                    <div style="height: 800px;"></div>
                 </div>
-            </footer>
+                <!-- /.container-fluid-->
+                <!-- /.content-wrapper-->
+                <footer class="sticky-footer">
+                    <div class="container">
+                        <div class="text-center">
+                            <small></small>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </div>
     </body>
     <script src="../module/JSZip-2.5.0/jszip.min.js" type="text/javascript"></script>
@@ -115,11 +119,11 @@ include '../include/db_config.php';
             language: 'ru-RU',
             format: 'dd.mm.YYYY'
         });
-      
+
         $(document).ready(function () {
 
-          
-        );
+
+        });
 
     </script>
 

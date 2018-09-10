@@ -62,8 +62,8 @@ var newModal = `
                         $('#AddRole').val(html.role);
                 }
         });
-        }
+}
 
 $('#addUserButton').on('click', function (){
-   alert("ok"); 
-});
+alert("ok");
+        });

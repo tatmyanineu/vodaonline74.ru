@@ -39,13 +39,10 @@ array_multisort($tmp1, $tmp2, $array);
 
 
 $sql_port = pg_query('SELECT 
-  "Tepl"."ProperConnect_cnt"."ValueProp" as numb,
+  "Tepl"."ProperConnect_cnt"."ValueProp" AS numb,
   "Places_cnt3".plc_id
 FROM
-  "Tepl"."Places_cnt" "Places_cnt1"
-  INNER JOIN "Tepl"."Places_cnt" ON ("Places_cnt1".place_id = "Tepl"."Places_cnt".plc_id)
-  INNER JOIN "Tepl"."Places_cnt" "Places_cnt2" ON ("Places_cnt1".plc_id = "Places_cnt2".place_id)
-  INNER JOIN "Tepl"."Places_cnt" "Places_cnt3" ON ("Places_cnt2".plc_id = "Places_cnt3".place_id)
+  "Tepl"."Places_cnt" "Places_cnt3"
   INNER JOIN "Tepl"."Connect_cnt" ON ("Places_cnt3".plc_id = "Tepl"."Connect_cnt".plc_id)
   INNER JOIN "Tepl"."Connect_cnt_Config" ON ("Tepl"."Connect_cnt".con_id = "Tepl"."Connect_cnt_Config".con_id)
   INNER JOIN "Tepl"."ProperConnect_cnt" ON ("Tepl"."Connect_cnt_Config"."Conf_id" = "Tepl"."ProperConnect_cnt"."Conf_id")
@@ -65,12 +62,11 @@ $sql_resource = pg_query($conn, 'SELECT DISTINCT
                     INNER JOIN "Tepl"."GroupToUserRelations" ON ("Tepl"."GroupToUserRelations".grp_id = "Tepl"."ParamResGroupRelations".grp_id)
                     INNER JOIN "Tepl"."User_cnt" ON ("Tepl"."User_cnt".usr_id = "Tepl"."GroupToUserRelations".usr_id)
                   WHERE
-                    "Tepl"."ParametrResourse"."Name" NOT LIKE \'%Время%\' AND 
+
                     "Tepl"."User_cnt"."Login" = \'' . $_SESSION['auth']['login'] . '\'
                     ORDER BY
                     resource');
 $res = pg_fetch_all($sql_resource);
-
 
 
 $col_res = array();

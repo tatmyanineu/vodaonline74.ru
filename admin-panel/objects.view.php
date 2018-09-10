@@ -116,6 +116,9 @@ include '../include/db_config.php';
                                                 case 3:
                                                     met.settings.aoColumns[met.col].sClass = "bg-warning";
                                                     break;
+                                                case 4:
+                                                    met.settings.aoColumns[met.col].sClass = "bg-secondary";
+                                                    break;
                                             }
 
                                         }
@@ -186,9 +189,9 @@ include '../include/db_config.php';
                             </div>
                             <div class="modal-body">
                                 <div class="p-3 mb-2 bg-info text-white">На обьекте отсутствует импульс (более 7 дней)</div>
-                                <div class="p-3 mb-2 bg-danger text-white">От обьекта не поуступают данные (более 7 дней)</div>
+                                <div class="p-3 mb-2 bg-danger text-white">От обьекта не поступают данные (более 7 дней)</div>
                                 <div class="p-3 mb-2 bg-warning text-white">Нет архива за последние 2 месяца</div>
-
+                                <div class="p-3 mb-2 bg-secondary text-white">Неисправность, маленький расход за период(7 дней) </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
