@@ -132,11 +132,20 @@ $date2 = date('21.m.Y');
 
                     <table id="fias" class="mt-5">
                         <thead>
+                        <th>plc_id</th>
+                        <th>Адрес</th>
+                        <th>Параметр</th>
+                        <th>Объем1 (м3)</th>
+                        <th>Дата Нач.</th>
+                        <th>Объем2 (м3)</th>
+                        <th>Дата Нач.</th>
+                        <th>Итого</th>
+                        <th>Код. ошибки</th>
                         </thead>
                     </table>
                 </div>
 
-                <div style="height: 800px;"></div>
+                <div id="loader" style="height: 800px;"></div>
             </div>
             <!-- /.container-fluid-->
             <!-- /.content-wrapper-->
@@ -165,55 +174,93 @@ $date2 = date('21.m.Y');
             language: 'ru-RU',
             format: 'dd.mm.YYYY'
         });
-        function ajaxRequest() {
-            var res;
-            var dist = $('#id_dist').val();
-            var date1 = $('#date1').val(),
-                    date2 = $('#date2').val();
-            $.ajax({
-                type: 'POST',
-                cache: false,
-                url: "ajax/reports/value.month.php",
-                data: {dist: dist, date1: date1, date2: date2},
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    res = data;
-                }
+//        function ajaxRequest() {
+//            var res;
+//            var dist = $('#id_dist').val();
+//            var date1 = $('#date1').val(),
+//                    date2 = $('#date2').val();
+//            $.ajax({
+//                type: 'POST',
+//                cache: false,
+//                url: "ajax/reports/value.month.php",
+//                data: {dist: dist, date1: date1, date2: date2},
+//                dataType: "json",
+//                async: false,
+//                beforeSend: function () {
+//                    $('#loader').html('<div id="circularG"> <div id="circularG_1" class="circularG"> </div> <div id="circularG_2" class="circularG"> </div> <div id="circularG_3" class="circularG"> </div> <div id="circularG_4" class="circularG"> </div> <div id="circularG_5" class="circularG"> </div> <div id="circularG_6" class="circularG"> </div> <div id="circularG_7" class="circularG"> </div> <div id="circularG_8" class="circularG"> </div> </div>');
+//                },
+//                success: function (data) {
+//                    res = data;
+//                }
+//
+//            })
+//            return res;
+//        }
+//
+//
+//        function view_table() {
+//            var json = ajaxRequest();
+//            var tableName = '#fias';
+//            $.each(json.columns, function (k, colObj) {
+//                str = '<th>' + colObj.title + '</th>';
+//                $(str).appendTo(tableName + '>thead>tr');
+//            });
+//            var tables = $(tableName).DataTable({
+//                destroy: true,
+//                dom: 'Bfrtip',
+//                buttons: [
+//                    'excel',
+//                    {
+//                        text: 'DBF экспорт',
+//                        action: function (e, dt, node, config) {
+//                            window.open('ajax/reports/download_dbf.php');
+//                        }
+//                    }
+//                ],
+//                paging: false,
+//                "processing": true,
+//                "autoWidth": false,
+//                oLanguage: {
+//                    "sLengthMenu": "Отображено _MENU_ записей на страницу",
+//                    "sSearch": "Поиск:",
+//                    "sZeroRecords": "Ничего не найдено - извините",
+//                    "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
+//                    "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
+//                    "sInfoFiltered": "(filtered from _MAX_ total records)",
+//                    "oPaginate": {
+//                        "sFirst": "Первая",
+//                        "sLast": "Посл.",
+//                        "sNext": "След.",
+//                        "sPrevious": "Пред.",
+//                    }
+//                },
+//                columns: json.columns,
+//                data: json.data,
+//            });
+//        }
 
-            })
-            return res;
-        }
+        $(document).ready(function () {
 
-
-        function view_table() {
-            var json = ajaxRequest();
-            var tableName = '#fias';
-            $.each(json.columns, function (k, colObj) {
-                str = '<th>' + colObj.title + '</th>';
-                $(str).appendTo(tableName + '>thead>tr');
+//
+            $('#archive_param').click(function () {
+                table.ajax.reload();
             });
-            var tables = $(tableName).DataTable({
-                destroy: true,
+//            view_table();
+//
+            var table = $('#fias').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
-                    'excel',
-                    {
-                        text: 'DBF экспорт',
-                        action: function (e, dt, node, config) {
-                            window.open('ajax/reports/download_dbf.php');
-                        }
-                    }
+                    'excel'
                 ],
                 paging: false,
-                "autoWidth": false,
-                oLanguage: {
+                "oLanguage": {
                     "sLengthMenu": "Отображено _MENU_ записей на страницу",
                     "sSearch": "Поиск:",
                     "sZeroRecords": "Ничего не найдено - извините",
                     "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
                     "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
                     "sInfoFiltered": "(filtered from _MAX_ total records)",
+                    "sLoadingRecords": '<img src="css/Ellipsis-1.9s-64px.gif"> Загрузка данных подожидте',
                     "oPaginate": {
                         "sFirst": "Первая",
                         "sLast": "Посл.",
@@ -221,55 +268,27 @@ $date2 = date('21.m.Y');
                         "sPrevious": "Пред.",
                     }
                 },
-                columns: json.columns,
-                data: json.data,
+                "ajax": {
+                    type: "POST",
+                    url: "ajax/reports/value.month.php",
+                    "data": function (d) {
+                        d.dist = $('#id_dist').val();
+                        d.date1 = $('#date1').val();
+                        d.date2 = $('#date2').val();
+                    }
+                },
+                columns: [
+                    {data: "plc_id", searchable: false},
+                    {data: "adr"},
+                    {data: "param_name", searchable: false},
+                    {data: "v1"},
+                    {data: "d1"},
+                    {data: "v2"},
+                    {data: "d2"},
+                    {data: "sum"},
+                    {data: "error"}
+                ]
             });
-        }
-
-        $(document).ready(function () {
-
-            $('#archive_param').click(function () {
-                $("th").remove();
-                view_table();
-            });
-            view_table();
-//
-//                var table = $('#fias').DataTable({
-//                    dom: 'Bfrtip',
-//                    buttons: [
-//                        'excel'
-//                    ],
-//                    paging: false,
-//                    "oLanguage": {
-//                        "sLengthMenu": "Отображено _MENU_ записей на страницу",
-//                        "sSearch": "Поиск:",
-//                        "sZeroRecords": "Ничего не найдено - извините",
-//                        "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
-//                        "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
-//                        "sInfoFiltered": "(filtered from _MAX_ total records)",
-//                        "oPaginate": {
-//                            "sFirst": "Первая",
-//                            "sLast": "Посл.",
-//                            "sNext": "След.",
-//                            "sPrevious": "Пред.",
-//                        }
-//                    },
-//                    "ajax": {
-//                        type: "POST",
-//                        url: "ajax/reports/value.month.php",
-//                    },
-//                    columns: [
-//                        {data: "plc_id", searchable: false},
-//                        {data: "adr"},
-//                        {data: "param_name", searchable: false},
-//                        {data: "v1"},
-//                        {data: "d1"},
-//                        {data: "v2"},
-//                        {data: "d2"},
-//                        {data: "sum"},
-//                        {data: "error"}
-//                    ]
-//                });
 
             $('#fias')
                     .removeClass('display')

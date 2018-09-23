@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0b3da82bc51b7dd2dae584a8201bbaa",
+    "content-hash": "7b591b15acc763d91ccb26b92b775ece",
     "packages": [
         {
             "name": "components/font-awesome",
@@ -192,6 +192,52 @@
             "time": "2018-06-22T15:34:14+00:00"
         },
         {
+            "name": "ghunti/highcharts-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ghunti/HighchartsPHP.git",
+                "reference": "19b76879da0e979da45e5a7fa772c776cedba794"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ghunti/HighchartsPHP/zipball/19b76879da0e979da45e5a7fa772c776cedba794",
+                "reference": "19b76879da0e979da45e5a7fa772c776cedba794",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ghunti\\HighchartsPHP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Goncalo Queiros",
+                    "email": "mail@goncaloqueiros.net",
+                    "homepage": "http://goncaloqueiros.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A php wrapper for highcharts and highstock javascript libraries",
+            "homepage": "http://goncaloqueiros.net/highcharts.php",
+            "keywords": [
+                "charts",
+                "highcharts",
+                "highstock",
+                "javascript",
+                "php"
+            ],
+            "time": "2018-08-06T15:50:32+00:00"
+        },
+        {
             "name": "twbs/bootstrap",
             "version": "v4.1.1",
             "source": {
@@ -247,7 +293,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "components/font-awesome": 20
+        "components/font-awesome": 20,
+        "ghunti/highcharts-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

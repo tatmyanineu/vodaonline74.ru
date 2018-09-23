@@ -75,38 +75,59 @@ include '../include/db_config.php';
                 </ol>
 
                 <hr>
-                <div class="my-3 p-3 bg-white rounded shadow-sm">
 
-
-
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Справочник ФИАС</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">fias</h6>
-                            <p class="card-text">Связка идентификаторов plc_id с ФИАС кодом, и кодом из ЦН</p>
-                            <a href="manual.fias.php" class="card-link">Перейти</a>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник ФИАС</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">fias</h6>
+                                <p class="card-text">Связка идентификаторов plc_id с ФИАС кодом, и кодом из ЦН</p>
+                                <a href="manual.fias.php" class="btn btn-primary">Перейти</a>
+                            </div>
                         </div>
                     </div>
-                    
-                     <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Справочник Координат</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">location</h6>
-                            <p class="card-text">Координаты для маркеров на карте. Функция Добавить координаты работает Y.maps автоматом из списка выбранных обьектов </p>
-                            <a href="manual.location.php" class="card-link">Перейти</a>
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник Подключений счечтиков</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">property connection</h6>
+                                <p class="card-text">Связка параметров ресурсов с данные для МУП ПОВВ </p>
+                                <a href="manual.connect.php" class="btn btn-primary">Перейти</a>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Справочник Подключений счечтиков</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">property connection</h6>
-                            <p class="card-text">Связка параметров ресурсов с данные для МУП ПОВВ </p>
-                            <a href="manual.connect.php" class="card-link">Перейти</a>
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник Координат</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">location</h6>
+                                <p class="card-text">Координаты для маркеров на карте. </p>
+                                <a href="manual.location.php" class="btn btn-primary">Перейти</a>
+                            </div>
                         </div>
                     </div>
-                    <div style="height: 800px;"></div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник Исключений</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">exception</h6>
+                                <p class="card-text">Справочник обьектов с известной причиной неисправности <br>
+                                    <a href="list.exception.php"> редактировать список исключений</a> 
+                                </p>
+                                <a href="manual.exception.php" class="btn btn-primary">Перейти</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div style="height: 800px;"></div>
+
                 <!-- /.container-fluid-->
                 <!-- /.content-wrapper-->
                 <footer class="sticky-footer">

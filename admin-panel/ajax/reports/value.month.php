@@ -12,11 +12,11 @@ session_start();
 include '../../../include/db_config.php';
 include '../get_objects.query.php';
 
-//$date1 = $_POST['date1'];
-//$date2 = $_POST['date2'];
+$date1 = $_POST['date1'];
+$date2 = $_POST['date2'];
 
-$date1 = '2018-07-21';
-$date2 = '2018-08-21';
+//$date1 = '2018-07-21';
+//$date2 = '2018-08-21';
 $sql_tree = pg_query('SELECT DISTINCT 
   "Tepl"."Places_cnt".typ_id
 FROM
@@ -237,21 +237,21 @@ for ($i = 0; $i < count($param); $i++) {
     }
 }
 
-$column['columns'] = array(
-    array("title" => "plc_id", "data" => "plc_id"),
-    array("title" => "Адрес", "data" => "adr"),
-    array("title" => "Параметр", "data" => "param_name"),
-    array("title" => "Объем1 (м3)", "data" => "v1"),
-    array("title" => "Дата Нач.", "data" => "d1"),
-    array("title" => "Объем2 (м3)", "data" => "v2"),
-    array("title" => "Дата Кон.", "data" => "d2"),
-    array("title" => "Итого", "data" => "sum"),
-    array("title" => "Код. ошибки", "data" => "error")
-);
+//$column['columns'] = array(
+//    array("title" => "plc_id", "data" => "plc_id"),
+//    array("title" => "Адрес", "data" => "adr"),
+//    array("title" => "Параметр", "data" => "param_name"),
+//    array("title" => "Объем1 (м3)", "data" => "v1"),
+//    array("title" => "Дата Нач.", "data" => "d1"),
+//    array("title" => "Объем2 (м3)", "data" => "v2"),
+//    array("title" => "Дата Кон.", "data" => "d2"),
+//    array("title" => "Итого", "data" => "sum"),
+//    array("title" => "Код. ошибки", "data" => "error")
+//);
 
 
 $data = array();
-$data = array_merge($data, $column);
+//$data = array_merge($data, $column);
 
 
 if ($_POST['dist'] == 0) {

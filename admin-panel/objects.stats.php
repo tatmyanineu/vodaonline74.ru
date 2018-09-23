@@ -58,7 +58,7 @@ include '../include/db_config.php';
 
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="#">Объекты</a>
+                        <a href="objects.view.php">Объекты</a>
                     </li>
                     <li class="breadcrumb-item active">Информация</li>
                 </ol>

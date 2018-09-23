@@ -18,7 +18,7 @@ $date2 = date($num . '.m.Y');
 ?>
 <html>
     <head>
-        <title>Архив обьекта: <?php echo $adr[0]['adr']; ?> </title>
+        <title>График обьекта: <?php echo $adr[0]['adr']; ?> </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -105,7 +105,7 @@ $date2 = date($num . '.m.Y');
                         </div>
                         <select class="form-control type_arch" id="type_archive">
                             <option value="1">Часовой</option>
-                            <option value="2" selected>Суточный</option>
+                            <option value="2">Суточный</option>
                             <option value="3">Месячный</option>
                         </select>
                     </div>
@@ -131,17 +131,16 @@ $date2 = date($num . '.m.Y');
 
                     <ul class="nav nav-tabs  nav-justified mt-5" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" href="object.view.php?id=<?php echo $_GET['id']; ?>" role="tab" >Архив: таблица</a>
+                            <a class="nav-link" href="object.view.php?id=<?php echo $_GET['id']; ?>" role="tab" >Архив: таблица</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="object.chart.php?id=<?php echo $_GET['id']; ?>" role="tab">Архив: график</a>
+                            <a class="nav-link active" href="object.chart.php?id=<?php echo $_GET['id']; ?>" role="tab" >Архив: график</a>
                         </li>
                     </ul>
 
+                    <div id="charts">
 
-                    <table id="view_table" class="mt-5" style="font-size: 12px; padding-right: 0px;">
-                        <thead><tr></tr></thead>
-                    </table>
+                    </div>
                 </div>
 
 
@@ -168,118 +167,57 @@ $date2 = date($num . '.m.Y');
     <script src="../module/Buttons-1.5.2/js/buttons.flash.min.js" type="text/javascript"></script>
     <script src="../module/Buttons-1.5.2/js/buttons.html5.min.js" type="text/javascript"></script>
     <script src="../module/Buttons-1.5.2/js/buttons.print.js" type="text/javascript"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
     <script>
 
         $('[data-toggle="datepicker"]').datepicker({
             language: 'ru-RU',
             format: 'dd.mm.YYYY'
         });
-        function ajaxRequest() {
-            var res;
-            var plc = <?php echo $_GET['id']; ?>;
-            var type = $('#type_archive').val();
-            var date1 = $('#date1').val(),
-                    date2 = $('#date2').val();
-            $.ajax({
-                type: 'POST',
-                cache: false,
-                url: "ajax/objects/table_archive.php",
-                data: {plc: plc, type: type, date1: date1, date2: date2},
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    res = data;
-                }
 
-            })
-            return res;
-        }
-        function view_table() {
-            var json = ajaxRequest();
-            var tableName = '#view_table';
-            $.each(json.columns, function (k, colObj) {
-                str = '<th>' + colObj.title + '</th>';
-                $(str).appendTo(tableName + '>thead>tr');
+        function charts(plc, date1, date2) {
+
+            $.getJSON('ajax/objects/charts_archive.php', {plc: plc, date1: date1, date2: date2}, function (chartData) {
+                console.log(chartData.value);
+                $('#charts').highcharts({
+                    chart: {
+                        type: 'line',
+                        height: 600
+                    },
+                    title: {
+                        text: 'Потребление водоснабжения'
+                    },
+                    plotOptions: {
+                        line: {
+                            dataLabels: {
+                                enabled: true
+                            },
+                            enableMouseTracking: false
+                        }
+                    },
+                    yAxis: {
+                        title: {text: 'объем'}
+                    },
+                    xAxis: {
+                        categories: chartData.date
+                    },
+
+                    series: chartData.value
+
+                });
             });
-            var tables = $(tableName).DataTable({
-                destroy: true,
-                dom: 'Brtip',
-                buttons: [{
-                        extend: 'excelHtml5',
-                        customize: function (xlsx) {
-                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                            // Loop over the cells in column `C`
-                            $('row c[r^="C"]', sheet).each(function () {
-                                // Get the value
-                                if ($('is t', this).text() == '00:00') {
-                                    $(this).attr('s', '20');
-                                }
-                            });
-                        }
-                    }],
-                "pageLength": 50,
-                "autoWidth": false,
-                oLanguage: {
-                    "sLengthMenu": "Отображено _MENU_ записей на страницу",
-                    "sSearch": "Поиск:",
-                    "sZeroRecords": "Ничего не найдено - извините",
-                    "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
-                    "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
-                    "sInfoFiltered": "(filtered from _MAX_ total records)",
-                    "oPaginate": {
-                        "sFirst": "Первая",
-                        "sLast": "Посл.",
-                        "sNext": "След.",
-                        "sPrevious": "Пред.",
-                    }
-                },
-                columns: json.columns,
-                data: json.data,
-                footerCallback: function (row, data, start, end, display) {
-                    $('#view_table>tfoot>').remove();
-                    var footer = $("<tfoot></tfoot>").appendTo(tableName);
-                    footer.addClass('bg-success text-white');
-                    var footertr = $("<tr></tr>").appendTo(footer);
-                    var api = this.api(), data;
-                    var id = api.context[0].aoColumns;
-                    for (i = 0; i < id.length; i++) {
-                        if (i == 0) {
-                            str = '<td><b>Итог за период</b></td>';
-                        } else {
-                            str = "<td></td>";
-                        }
-
-                        if (id[i].mData.indexOf('res_') + 1) {
-                            var res = id[i].mData.slice(4);
-                            str = '<td><b>' + json.summa[res] + '</b></td>';
-                        }
-
-                        $(str).appendTo(tableName + '>tfoot>tr');
-                    }
-                }
-            });
-//                  Функция использования рендера столбцов
-//                data.columns[0].render = function (data, type, row) {
-//                    return '<h4>' + data + '</h4>';
-//                }
-
-
-
-
         }
 
         $(document).ready(function () {
+            var plc = <?php echo $_GET['id']; ?>;
+            charts(plc, $('#date1').val(), $('#date2').val());
 
             $('#archive_param').click(function () {
-                $("th").remove();
-                $('#view_table>tfoot>').remove();
-                view_table();
+               charts(plc, $('#date1').val(), $('#date2').val());
             });
-            view_table();
-            $('#view_table')
-                    .removeClass('display')
-                    .addClass('table table-striped table-bordered');
         }
         );
 

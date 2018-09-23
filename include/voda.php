@@ -35,3 +35,20 @@ function voda_raz($array) {
     }
     return $data;
 }
+
+function voda_values($array) {
+    $array = array_reverse($array);
+    for ($i = 0; $i < count($array); $i++) {
+
+        if ($i + 1 != count($array)) {
+            if ($array[$i] == 0) {
+                $x = 0;
+                $data[] = floatval(sprintf("%.2f", $x));
+            } else {
+                $x = $array[$i] - $array[$i + 1];
+                $data[] = floatval(sprintf("%.2f", $x));
+            }
+        }
+    }
+    return array_reverse($data);
+}

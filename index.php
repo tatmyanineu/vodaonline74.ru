@@ -1,4 +1,4 @@
 
 <?php
-
-phpinfo();
+header("location: admin-panel/index.php");
+//phpinfo();
