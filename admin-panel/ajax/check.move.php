@@ -20,6 +20,9 @@ switch ($_POST['action']) {
     case "loc_check":
         location_check($_POST['plc'], $_POST['location']);
         break;
+    case "exception":
+        exception($_POST['data']);
+        break;
 }
 
 //ФИАС fias_cnt
@@ -67,4 +70,51 @@ function location_check($plc, $location) {
         $id = pg_fetch_row($sql, 0);
         update_location($id[0], $location);
     }
+}
+
+function exception($array) {
+    $g++;
+
+    if ($array['date_begin'] != "" and $array['date_end'] != "") {
+        if (strtotime($array['date_begin']) < strtotime($array['date_end'])) {
+            $sql = pg_query('SELECT *
+                    FROM
+                      public.exception
+                    WHERE
+                      public.exception.plc_id = ' . $array['plc'] . ' AND 
+                      public.exception.date_begin >= \'' . $array['date_begin'] . '\' AND 
+                      public.exception.date_end <= \'' . $array['date_end'] . '\'');
+            if (pg_num_rows($sql) > 0) {
+                $data['error'] = 1;
+                $data['text'] = "В выбранный вами период уже действует исключение для данного параметра";
+            } else {
+                add_exception($array, 0);
+                $data['error'] = 0;
+            }
+        } else {
+            $data['error'] = 1;
+            $data['text'] = "Дата начала исключения, больше даты окончания действия исключения";
+        }
+    } elseif ($array['date_begin'] != "" and $array['date_end'] == "") {
+
+        $sql = pg_query('SELECT *
+                    FROM
+                      public.exception
+                    WHERE
+                      public.exception.plc_id = ' . $array['plc'] . ' AND 
+                      public.exception.date_begin <= \'' . $array['date_begin'] . '\' ');
+
+        if (pg_num_rows($sql) > 0) {
+            $data['error'] = 1;
+            $data['text'] = "В выбранный вами период уже действует исключение для данного параметра";
+        } else {
+            add_exception($array, 1);
+            $data['error'] = 0;
+        }
+    } else {
+        $data['error'] = 1;
+        $data['text'] = "Даты начала или окончания исключения пустые";
+    }
+
+    echo json_encode($data);
 }

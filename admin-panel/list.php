@@ -12,7 +12,7 @@ include '../include/db_config.php';
 
 <html>
     <head>
-        <title>ЛИСТ справочника исключений </title>
+        <title>ЛИСТ справочника </title>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script
@@ -59,12 +59,20 @@ include '../include/db_config.php';
                     <?php include '../include/menu.php'; ?>
 
 
-                    <li class="nav-item mt-5" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить координаты">
-                        <a class="nav-link" href="#" id="addLocation">
-                            <i class="fas fa-map-pin"></i>
-                            <span class="nav-link-text">Добавить координаты (API)</span>
+                    <li class="nav-item mt-3" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить элемент">
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#add_element_modal">
+                            <i class="fas fa-plus"></i>
+                            <span class="nav-link-text">Добавить Элемент</span>
                         </a>
                     </li>
+
+                    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить элемент">
+                        <a class="nav-link" href="#" id="delete_elements">
+                            <i class="fas fa-trash-alt"></i>
+                            <span class="nav-link-text">Удалить Элемент</span>
+                        </a>
+                    </li>
+
                 </ul>
 
                 <ul class="navbar-nav ml-auto">
@@ -82,14 +90,33 @@ include '../include/db_config.php';
         </nav>
         <div class="content-wrapper">
             <div class="container-fluid">
-                <!-- Breadcrumbs-->
+                <div class="modal fade" id="add_element_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Добавить элемент списка</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row" style="margin-bottom: 15px;">
+                                    <div class="col-lg-3 col-md-3 col-xs-12">Значение*</div>
+                                    <div class="col-lg-9 col-md-9 col-xs-12"><input type="text" id="addNameValues" class="form-control"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <button class="btn  btn-primary" id="addButton">Добавить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="manual.php">Справочники</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a  href="manual.exception.php">Исключения</a>
                     </li>
                     <li class="breadcrumb-item active">
                         <a>Список значений</a>
@@ -100,12 +127,9 @@ include '../include/db_config.php';
                     <table id="datatables">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="SelectAll"  /></th>
-                                <th>№</th>
-                                <th>plc_id</th>
-                                <th>Город</th>
-                                <th>Адрес</th>
-                                <th>Координаты</th>
+                                <th></th>
+                                <th>id</th>
+                                <th>Значение</th>
                             </tr>
                         </thead>
                     </table>
@@ -143,6 +167,8 @@ include '../include/db_config.php';
 
 
         $(document).ready(function () {
+            var type = "<?php echo $_GET['type'] ?>";
+
 
             var table = $('#datatables').DataTable({
                 dom: 'Bfrtip',
@@ -166,68 +192,55 @@ include '../include/db_config.php';
                 },
                 "ajax": {
                     type: "POST",
-                    url: "ajax/manual/settings.location.php",
+                    url: "ajax/lists/view_tables.php",
+                    "data": function (d) {
+                        d.types = type;
+                    }
                 },
                 columns: [
                     {data: null,
                         fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-                            $(nTd).html('<input class="form-input cUser" type="checkbox" id="' + oData.plc_id + '"  value="' + oData.city + ', ' + oData.adr + '">');
+                            $(nTd).html('<input class="form-input" type="checkbox" id="' + oData.id + '">');
                         }
                     },
-                    {data: "numb", searchable: false},
-                    {data: "plc_id", searchable: false},
-                    {data: "city"},
-                    {data: "adr"},
-                    {data: "location"},
+                    {data: "id"},
+                    {data: "name"}
+
                 ]
             });
 
-            $('#SelectAll').click(function () {
-                var rows = table.rows({'search': 'applied'}).nodes();
-                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+
+            $('#addButton').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: "ajax/lists/add.list.php",
+                    data: {name: $('#addNameValues').val(), types: type},
+                    success: function (data) {
+                        table.ajax.reload();
+                        $('#addNameValues').val('');
+                    }
+                });
+                $('#add_element_modal').modal('hide');
             });
 
-            $('#addLocation').click(function () {
+
+            $('#delete_elements').click(function () {
                 table.$('input[type="checkbox"]').each(function () {
                     if (this.checked) {
-                        console.log(this.value);
-                        var adr = this.value;
-                        var plc = this.id;
-                        ymaps.ready(function () {
-                            var myGeocoder = ymaps.geocode("" + adr + "");
-                            myGeocoder.then(
-                                    function (res) {
-                                        var str_location = res.geoObjects.get(0).geometry.getCoordinates();
-                                        var location = str_location[0] + ". " + str_location[1];
-                                        console.log('Координаты объекта :' + location);
-                                        add_location(plc, location);
-                                    },
-                                    function (err) {
-                                        console.log('Ошибка');
-                                    }
-                            );
+                        $.ajax({
+                            type: 'POST',
+                            cache: false,
+                            url: "ajax/lists/delete.list.php",
+                            data: {id: this.id, types: type},
+                            success: function (data) {
+                                console.log(this.id);
+                            }
                         });
                     }
                 });
                 table.ajax.reload();
             });
-
-            var add_location = function (plc, location) {
-                console.log('фунция записи в базу');
-                var func = 'loc_check';
-                $.ajax({
-                    type: 'POST',
-                    cache: false,
-                    async: false,
-                    url: "ajax/check.move.php",
-                    data: {action: func, plc: plc, location: location},
-                    success: function (html) {
-                        
-                    }
-
-                });
-                return false;
-            }
 
             $('#datatables')
                     .removeClass('display')

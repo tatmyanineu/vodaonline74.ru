@@ -115,13 +115,24 @@ include '../include/db_config.php';
                                 <h5 class="card-title">Справочник Исключений</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">exception</h6>
                                 <p class="card-text">Справочник обьектов с известной причиной неисправности <br>
-                                    <a href="list.exception.php"> редактировать список исключений</a> 
+                                    <a href="list.php?type=exceptions"> редактировать список исключений</a> 
                                 </p>
                                 <a href="manual.exception.php" class="btn btn-primary">Перейти</a>
                             </div>
                         </div>
                     </div>
-
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник Заявок</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">tickets</h6>
+                                <p class="card-text">Заявки на обслуживание<br>
+                                    <a href="list.php?type=tickets"> редактировать список работ</a> 
+                                </p>
+                                <a href="manual.exception.php" class="btn btn-primary">Перейти</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
